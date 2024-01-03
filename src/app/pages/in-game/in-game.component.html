@@ -1,0 +1,73 @@
+<div class="in-game">
+	<div class="grid">
+		<div class="col-3" style="text-align: center;">
+	    	<h1>H O M E</h1>
+	    	<div class="grid" *ngFor="let player of homePlayers" style="display: flex; flex-direction: column; align-items: center;">
+	    		<div *ngIf="player.in_game" class="col" >
+	    			<button style="color: white; background-color: #42579E; width: 10vw; height: 3vh; margin: 5px; border-style: solid; border-radius: 10px; border-color: black">{{ player.name }}</button>
+	    		</div>
+	    	</div>
+	  	</div>
+	    
+	  	<div class="col-6" style="text-align: center;">
+	    	<h1>STATS</h1>
+	    	<div class="grid" style="text-align: center;">
+	    		<div class="col" style="display: flex; flex-direction: column; align-items: center;">
+	    			<table class="stats-marker" >
+	    				<tbody>
+	    					<tr >
+	    						<th colspan="2"></th>
+		    					<th colspan="6" style="border-style: solid; border-color: white; text-align: center;">
+		    						<h2>{{ timerMin }} : {{ timerSec }}</h2>
+		    					</th>
+		    					<th colspan="2">
+		    						<p-button *ngIf="!inGameStart" label="Start" (click)="playGame()"></p-button>
+		    						<p-button *ngIf="inGameStart" label="Pause" (click)="pauseGame()"></p-button>
+		    					</th>
+	    					</tr>
+	    					<tr>
+	    						<th colspan="4">
+	    							<h2>{{ homeName }}</h2>
+	    						</th>
+	    						<th colspan="4">
+	    							<h2>Periodo</h2>
+	    						</th>
+		    					<th colspan="4">
+		    						<h2>{{ awayName }}</h2>
+		    					</th>
+	    					</tr>
+	    					<tr>
+	    						<th colspan="4">
+	    							<h2>{{ homeGoals }}</h2>
+	    						</th>
+	    						<th colspan="4">
+	    							<h2>{{ period }}</h2>
+	    						</th>
+		    					<th colspan="4">
+		    						<h2>{{ awayGoals }}</h2>
+		    					</th>
+	    					</tr>		    					
+	    				</tbody>
+	    			</table>
+	    		</div>
+	    	</div>
+	    	<div class="grid">
+	    		<div class="col">
+	    			<canvas #myCanvas width="550vw" height="400vh" style="border:1px solid #000;"></canvas>
+	    		</div>
+	    	</div>
+	    	
+	  	</div>
+	  	<div class="col-3" style="text-align: center;">
+	    	<h1>A W A Y</h1>
+	    	<div class="grid" *ngFor="let player of awayPlayers" style="display: flex; flex-direction: column; align-items: center;">
+	    		<div *ngIf="player.in_game" class="col" >
+	    			<button style="color: white; background-color: #FF914D; width: 10vw; height: 3vh; margin: 5px; border-style: solid; border-radius: 10px; border-color: black">{{ player.name }}</button>
+	    		</div>
+	    	</div>
+
+	  	</div>
+	  	
+	</div>		
+</div>
+
