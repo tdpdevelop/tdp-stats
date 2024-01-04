@@ -79,6 +79,25 @@
 						<p-button label="POSS" severity="primary" (click)="changePoss('home')"></p-button>
 					</div>	    			
 	    		</div>
+	    		<div class="col-12" *ngIf="!homePlayersCharged">
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row; 
+						align-items: left; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<input
+							type="file"
+							mode="basic" 
+							chooseLabel="Choose" 
+							accept=".xlsx"
+							(change)="onFileChangeHome($event)"
+						/>
+						<p-button label="UP" severity="primary" (click)="readFileHome()"></p-button>
+					</div>	    			
+	    		</div>
 
 
 	    	</div>
@@ -226,6 +245,29 @@
 					</div>
 	    			
 	    		</div>
+	    		<div class="col-12" *ngIf="!awayPlayersCharged">
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row-reverse; 
+						align-items: right; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<input
+							type="file"
+							mode="basic" 
+							chooseLabel="Choose" 
+							accept=".xlsx"
+							(change)="onFileChangeAway($event)"
+						/>
+						<p-button label="UP" severity="warning" (click)="readFileAway()"></p-button>
+					</div>
+	    			
+	    		</div>
+
+	    		
+
 	    	</div>
 
 	  	</div>
@@ -248,12 +290,12 @@
 		<div class="col-6 card" style="display: flex; flex-direction: column; align-items: center; margin-top: 1vh">
 			<div *ngIf="scoreTeam == 'home'" >
 				<div class="card flex justify-content-center">
-				    <p-listbox [options]="homePlayers" [(ngModel)]="scorePlayer" optionLabel="name" [style]="{'width':'15rem'}" [listStyle]="{'max-height': '220px'}"></p-listbox>
+				    <p-listbox [options]="homePlayersInGame" [(ngModel)]="scorePlayer" optionLabel="name" [style]="{'width':'15rem'}" [listStyle]="{'max-height': '220px'}"></p-listbox>
 				</div>
 			</div>
 			<div *ngIf="scoreTeam == 'away'" >
 				<div class="card flex justify-content-center">
-				    <p-listbox [options]="awayPlayers" [(ngModel)]="scorePlayer" optionLabel="name" [style]="{'width':'15rem'}" [listStyle]="{'max-height': '220px'}"></p-listbox>
+				    <p-listbox [options]="awayPlayersInGame" [(ngModel)]="scorePlayer" optionLabel="name" [style]="{'width':'15rem'}" [listStyle]="{'max-height': '220px'}"></p-listbox>
 				</div>
 			</div>
 		</div>

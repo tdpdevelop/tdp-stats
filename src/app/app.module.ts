@@ -25,6 +25,7 @@ import { DividerModule      } from 'primeng/divider';
 import { TableModule        } from 'primeng/table';
 import { PanelModule        } from 'primeng/panel';
 import { DragDropModule     } from 'primeng/dragdrop';
+import { FileUploadModule   } from 'primeng/fileupload';
 
 
 @NgModule({
@@ -54,7 +55,8 @@ import { DragDropModule     } from 'primeng/dragdrop';
     DividerModule,
     TableModule,
     PanelModule,
-    DragDropModule
+    DragDropModule,
+    FileUploadModule
   ],
   exports : [
     PlayerComponent

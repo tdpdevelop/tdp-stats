@@ -2,6 +2,8 @@ import { Component, ViewChild, ElementRef,AfterViewInit, OnInit } from '@angular
 
 import { PlayersService } from './../../services/players.service'
 
+import * as XLSX from 'xlsx';
+
 
 @Component({
   selector: 'app-in-game',
@@ -11,8 +13,19 @@ import { PlayersService } from './../../services/players.service'
 export class InGameComponent implements AfterViewInit, OnInit{
   @ViewChild('myCanvas', { static: true }) canvas! : ElementRef<HTMLCanvasElement>;
 
+  private idAux : number = 1;
+
+  public homePlayersCharged : boolean = false;
+  public awayPlayersCharged : boolean = false;
+
+  public fileHome : File | undefined;
+  public fileAway : File | undefined;
+
+  public dataHome : any[] = [];
+  public dataAway : any[] = [];
+
   public homeTeamName : string = "TOROS A";
-  public awayTeamName : string = "TOROS B";
+  public awayTeamName : string = "THUNDER";
 
   public gameJsonArray : any[] = [];
 
@@ -23,7 +36,7 @@ export class InGameComponent implements AfterViewInit, OnInit{
 
   //-- Nombres de los equipos
   public homeName    : string = "TOROS A";
-  public awayName    : string = "TOROS A";
+  public awayName    : string = "THUNDER";
 
   //-- Tiempo
   public timerMin    : string = "10";
@@ -264,19 +277,19 @@ export class InGameComponent implements AfterViewInit, OnInit{
       if ( this.inGameStart == true ){
 
         //--
-
-        if ( (parseInt(this.twentyFour) > parseInt(this.timerSec) && parseInt(this.timerMin) < 1 ) ){
-          this.twentyFour = "--";
-        }
-        else{
-          this.twentyFour = (parseInt(this.twentyFour) - 1) + "";
-
-          if ( parseInt(this.twentyFour) == 0 ){
-            this.inGameStart = false;
-            this.twentyFour  = "24"; 
+        if ( this.twentyFour != "--" ){
+          if ( (parseInt(this.twentyFour) > parseInt(this.timerSec) && parseInt(this.timerMin) < 1 ) ){
+            this.twentyFour = "--";
           }
-        }
-          
+          else{
+            this.twentyFour = (parseInt(this.twentyFour) - 1) + "";
+
+            if ( parseInt(this.twentyFour) == 0 ){
+              this.inGameStart = false;
+              this.twentyFour  = "24"; 
+            }
+          }
+        }         
 
         if ( this.lastMinute == true ){
           if ( parseInt(this.timerMin) == 0 && parseInt(this.timerSec) == 0 ){
@@ -326,6 +339,7 @@ export class InGameComponent implements AfterViewInit, OnInit{
       }        
     }, 1000)
   }
+
   ngAfterViewInit(): void {
     this.canvas.nativeElement.addEventListener('click', (event) => {
       const rect = this.canvas.nativeElement.getBoundingClientRect();
@@ -346,7 +360,6 @@ export class InGameComponent implements AfterViewInit, OnInit{
     };
 
     img.src = imagePath;
-
   }
 
   askTimeout( team : string ){
@@ -661,16 +674,16 @@ export class InGameComponent implements AfterViewInit, OnInit{
   public normalFoul( player : any ){
     let flag : boolean = false;
 
-    for ( let i = 0 ; i < this.homePlayers.length ; i ++ ){
-      if ( this.homePlayers[i].id == player.id ){
+    for ( let i = 0 ; i < this.homePlayersInGame.length ; i ++ ){
+      if ( this.homePlayersInGame[i].id == player.id ){
         for ( let j = 0 ; j < 5 ; j ++ ){
-          if ( j == 4 && this.homePlayers[i].fouls[j].val == 0 ){
-              this.homePlayers[i].fouls[j].val = 2;
+          if ( j == 4 && this.homePlayersInGame[i].fouls[j].val == 0 ){
+              this.homePlayersInGame[i].fouls[j].val = 2;
               this.teamFoul('home');
               j = 5;
             }
-          if ( this.homePlayers[i].fouls[j].val == 0 ){
-            this.homePlayers[i].fouls[j].val = 1;
+          if ( this.homePlayersInGame[i].fouls[j].val == 0 ){
+            this.homePlayersInGame[i].fouls[j].val = 1;
             this.teamFoul('home');
             j = 5;
           }
@@ -681,16 +694,16 @@ export class InGameComponent implements AfterViewInit, OnInit{
     }
 
     if ( flag == false ){
-      for ( let i = 0 ; i < this.awayPlayers.length ; i ++ ){
-        if ( this.awayPlayers[i].id == player.id ){
+      for ( let i = 0 ; i < this.awayPlayersInGame.length ; i ++ ){
+        if ( this.awayPlayersInGame[i].id == player.id ){
           for ( let j = 0 ; j < 5 ; j ++ ){
-            if ( j == 4 && this.awayPlayers[i].fouls[j].val == 0 ){
-              this.awayPlayers[i].fouls[j].val = 2;
+            if ( j == 4 && this.awayPlayersInGame[i].fouls[j].val == 0 ){
+              this.awayPlayersInGame[i].fouls[j].val = 2;
               this.teamFoul('away');
               j = 5;
             }
-            if ( this.awayPlayers[i].fouls[j].val == 0 ){
-              this.awayPlayers[i].fouls[j].val = 1;
+            if ( this.awayPlayersInGame[i].fouls[j].val == 0 ){
+              this.awayPlayersInGame[i].fouls[j].val = 1;
               this.teamFoul('away');
               j = 5;
             }
@@ -761,6 +774,122 @@ export class InGameComponent implements AfterViewInit, OnInit{
     else{
       this.subsVisibleAway = true;
     }
+  }
+
+
+  //-- FILES
+
+  public onFileChangeHome( event: any ) {
+    this.fileHome = event.target.files[0];
+
+  }
+
+  public onFileChangeAway( event: any ) {
+    this.fileAway = event.target.files[0];
+  }
+
+  public readFileHome() {
+    if (this.fileHome) {
+      const fileReader = new FileReader();
+      fileReader.onload = (e: any) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0]; // Assuming you want to read the first sheet
+
+        const worksheet = workbook.Sheets[sheetName];
+        this.dataHome   = XLSX.utils.sheet_to_json(worksheet);
+        this.chargeHomePlayersFromExcel();
+      };
+      fileReader.readAsArrayBuffer(this.fileHome);
+    }
+  }
+
+  public readFileAway() {
+    if (this.fileAway) {
+      const fileReader = new FileReader();
+      fileReader.onload = (e: any) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0]; // Assuming you want to read the first sheet
+
+        const worksheet = workbook.Sheets[sheetName];
+        this.dataAway   = XLSX.utils.sheet_to_json(worksheet);
+        this.chargeAwayPlayersFromExcel();
+      };
+      fileReader.readAsArrayBuffer(this.fileAway);
+    }
+  }
+
+  public chargeHomePlayersFromExcel(){
+    this.homePlayers = [];
+    for ( let i = 0 ; i < this.dataHome.length ; i ++ ){
+      let json : any = {
+        id       : this.idAux,
+        name     : this.dataHome[i].fullname,
+        age      : this.dataHome[i].age,
+        position : 'Pivot',
+        jersey_n : this.dataHome[i].n,
+        in_game  : false,
+        rebounds : 0,
+        points   : 0,
+        assists  : 0,
+        free_sht : 0,
+        fr_sh_at : 0,
+        doubles  : 0,
+        three    : 0,
+        gen_at   : 0,
+        doubles_at  : 0,
+        three_at    : 0,
+        general_percent : "0%",
+        fr_sht_percent  : "0%",
+        three_percent   : "0%",
+        double_percent  : "0%",
+        minutes_played  : 0,
+        fouls_in_game   : 0,
+        fouls           : [ { i : 1, val : 0}, { i : 2, val : 0 }, { i : 3 , val : 0 }, { i : 4 , val : 0}, { i : 5, val : 0 } ]
+      };
+
+      this.idAux += 1;
+
+      this.homePlayers.push(json)
+    }
+    this.homePlayersCharged = true;
+  }
+
+  public chargeAwayPlayersFromExcel(){
+    this.awayPlayers = [];
+    for ( let i = 0 ; i < this.dataAway.length ; i ++ ){
+      let json : any = {
+        id       : this.idAux,
+        name     : this.dataAway[i].fullname,
+        age      : this.dataAway[i].age,
+        position : 'Pivot',
+        jersey_n : this.dataAway[i].n,
+        in_game  : false,
+        rebounds : 0,
+        points   : 0,
+        assists  : 0,
+        free_sht : 0,
+        fr_sh_at : 0,
+        doubles  : 0,
+        three    : 0,
+        gen_at   : 0,
+        doubles_at  : 0,
+        three_at    : 0,
+        general_percent : "0%",
+        fr_sht_percent  : "0%",
+        three_percent   : "0%",
+        double_percent  : "0%",
+        minutes_played  : 0,
+        fouls_in_game   : 0,
+        fouls           : [ { i : 1, val : 0}, { i : 2, val : 0 }, { i : 3 , val : 0 }, { i : 4 , val : 0}, { i : 5, val : 0 } ]
+      };
+
+      this.idAux += 1;
+
+      this.awayPlayers.push(json)
+    }
+    this.awayPlayersCharged = true;
   }
 }
 
