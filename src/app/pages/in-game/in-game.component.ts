@@ -42,7 +42,7 @@ export class InGameComponent implements AfterViewInit, OnInit{
     {
       id : 3,
       name : 'Player 3',
-      in_game : true
+      in_game : false
     },
     {
       id : 4,
@@ -57,12 +57,12 @@ export class InGameComponent implements AfterViewInit, OnInit{
     {
       id : 6,
       name : 'Player 6',
-      in_game : true
+      in_game : false
     },
     {
       id : 7,
       name : 'Player 7',
-      in_game : true
+      in_game : false
     },
     {
       id : 8,
@@ -75,7 +75,7 @@ export class InGameComponent implements AfterViewInit, OnInit{
     {
       id : 1,
       name : 'Player 1',
-      in_game : true
+      in_game : false
     },
     {
       id : 2,
@@ -85,7 +85,7 @@ export class InGameComponent implements AfterViewInit, OnInit{
     {
       id : 3,
       name : 'Player 3',
-      in_game : true
+      in_game : false
     },
     {
       id : 4,
@@ -95,7 +95,7 @@ export class InGameComponent implements AfterViewInit, OnInit{
     {
       id : 5,
       name : 'Player 5',
-      in_game : true
+      in_game : false
     },
     {
       id : 6,
