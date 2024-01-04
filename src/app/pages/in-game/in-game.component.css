@@ -8,9 +8,14 @@
 	height: 100vh;
 }
 
-h1{
+.title{
 	text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
 	color: white;
+}
+
+.poss-title{
+	text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+	color: red;
 }
 
 .stats-marker{
@@ -21,4 +26,50 @@ h1{
 	border-radius: 10px; 
 	background-color: rgba(0, 0, 0, 0.7);
 	color : white;
+}
+
+.circle {
+  width: 12px; /* Define el ancho del círculo */
+  height: 12px; /* Define la altura del círculo */
+  border: 2px solid black; /* Define el borde del círculo */
+  border-radius: 50%; /* Hace que el borde se redondee para formar un círculo */
+  background-color: white; /* Define el color de fondo */
+}
+
+.circle_onfoul {
+  width: 12px;; /* Define el ancho del círculo */
+  height: 12px;; /* Define la altura del círculo */
+  border: 2px solid black; /* Define el borde del círculo */
+  border-radius: 50%; /* Hace que el borde se redondee para formar un círculo */
+  background-color: yellow; /* Define el color de fondo */
+}
+
+.circle_expulsion {
+  width: 12px;; /* Define el ancho del círculo */
+  height: 12px;; /* Define la altura del círculo */
+  border: 2px solid black; /* Define el borde del círculo */
+  border-radius: 50%; /* Hace que el borde se redondee para formar un círculo */
+  background-color: red; /* Define el color de fondo */
+}
+
+.score-center{
+	display: flex;
+	justify-content: center; /* Centra los elementos horizontalmente */
+	align-items: center; /* Centra los elementos verticalmente */
+	/* Opcional: si deseas centrar solo horizontalmente o verticalmente, puedes usar solo una de estas propiedades */
+}
+
+:host ::ng-deep {
+    .drop-column {
+        border: 1px solid transparent;
+        transition: border-color .2s;
+    
+        &.p-draggable-enter {
+            border-color: var(--primary-color); 
+        }
+    }
+
+    [pDraggable] {
+        cursor: move;
+    }
 }

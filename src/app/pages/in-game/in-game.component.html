@@ -1,30 +1,93 @@
 <div class="in-game">
 	<div class="grid">
-		<div class="col-3" style="text-align: center;">
-	    	<h1>H O M E</h1>
-	    	<div class="grid" style="display: flex; flex-direction: column; align-items: center;">
-	    		<div *ngFor="let player of homePlayers" class="col-12">
-	    			<p-button label="{{ player.name }}" severity="primary" (click)="showPlayer(player)"></p-button>
+		<div class="col-4" style="text-align: center;">
+			<h1 class="title" *ngIf="!possHome">{{ homeTeamName }}</h1>
+	    	<h1 class="poss-title" *ngIf="possHome">{{ homeTeamName }} <-</h1>
+	    	<div style="display: flex;  justify-content: center; margin-top: 2vh;" >
+				<div 
+					class="circle" 
+					*ngFor="let foul of homeFouls"
+					[ngClass]="{
+						'circle'           : foul.val === 0, 
+						'circle_onfoul'    : foul.val === 1,
+	    				'circle_expulsion' : foul.val === 2}"
+				></div>
+			</div>
+	    	<div class="grid" style="display: flex; flex-direction: column; align-items: center; margin-top: 3vh">
+	    		<div *ngFor="let player of homePlayersInGame" class="col-12">
+	    			<div class="grid" style="
+	    								display: flex; 
+	    								flex-direction: row; 
+	    								align-items: left; 
+	    								border-style: solid; 
+	    								border-color: white; 
+	    								width: 80%;
+	    								margin-left: 3vw;">
+	    				
+	    				<div class="col-7" style="display: flex; justify-content: flex-start; margin-right: 2vw;">
+	    					<p-button label="{{ player.name }}" severity="primary" (click)="showPlayer(player)"></p-button>
+	    				</div>
+	    				<div class="col-4" style="display: flex;  justify-content: flex-start; margin-top: 2vh;" >
+	    					<div 
+	    						class="circle" 
+	    						*ngFor="let foul of player.fouls"
+	    						[ngClass]="{
+	    							'circle'           : foul.val === 0, 
+	    							'circle_onfoul'    : foul.val === 1,
+	    							'circle_expulsion' : foul.val === 2}"
+	    						></div>
+	    				</div>
+	    				
+	    			</div>
+	    			
 	    		</div>
 	    		<p-divider></p-divider>
+	    		<div class="col-12" >
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row; 
+						align-items: left; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<p-button label="SUBSTITUTIONS" severity="primary" (click)="openSubsModal('home')"></p-button>
+					</div>	    			
+	    		</div>
 	    		<div class="col-12">
-	    			<p-button label="SUBSTITUTIONS" severity="primary"></p-button>
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row; 
+						align-items: left; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<p-button label="TIMEOUT" severity="primary" (click)="askTimeout('home')"></p-button>
+					</div>
+	    			
 	    		</div>
-	    		<div class="col-6">
-	    			<p-button label="TIMEOUT" severity="primary"></p-button>
-	    		</div>
-	    		<div class="col-6">
-	    			<p-button label="POSS" severity="primary"></p-button>
+	    		<div class="col-12">
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row; 
+						align-items: left; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<p-button label="POSS" severity="primary" (click)="changePoss('home')"></p-button>
+					</div>	    			
 	    		</div>
 
 
 	    	</div>
 	  	</div>
 	    
-	  	<div class="col-6" style="text-align: center;">
-	    	<h1>STATS</h1>
-	    	<div class="grid" style="text-align: center;">
-	    		<div class="col" style="display: flex; flex-direction: column; align-items: center;">
+	  	<div class="col-4" style="text-align: center; margin: auto">
+	    	<h1 class="title">GAME STATS</h1>
+	    	<div class="grid score-center">
+	    		<div class="col">
 	    			<table class="stats-marker" >
 	    				<tbody>
 	    					<tr >
@@ -78,26 +141,90 @@
 	    	</div>
 	    	<div class="grid">
 	    		<div class="col">
-	    			<canvas #myCanvas width="550vw" height="400vh" style="border:1px solid #000;"></canvas>
+	    			<canvas #myCanvas width="500vw" height="400vh" style="border:1px solid #000;"></canvas>
 	    		</div>
 	    	</div>
 	    	
 	  	</div>
-	  	<div class="col-3" style="text-align: center;">
-	    	<h1>A W A Y</h1>
-	    	<div class="grid" style="display: flex; flex-direction: column; align-items: center;">
-	    		<div *ngFor="let player of awayPlayers" class="col" >
-	    			<p-button label="{{ player.name }}" severity="warning"></p-button>
+	  	<div class="col-4" style="text-align: center;">
+	    	<h1 class="title" *ngIf="!possAway">{{ awayTeamName }}</h1>
+	    	<h1 class="poss-title" *ngIf="possAway" >-> {{ awayTeamName }}</h1>
+	    	<div style="display: flex;  justify-content: center; margin-top: 2vh;" >
+				<div 
+					class="circle" 
+					*ngFor="let foul of awayFouls"
+					[ngClass]="{
+						'circle'           : foul.val === 0, 
+						'circle_onfoul'    : foul.val === 1,
+	    				'circle_expulsion' : foul.val === 2}"
+				></div>
+			</div>
+	    	<div class="grid" style="display: flex; flex-direction: column; align-items: right; margin-top: 3vh">
+	    		<div *ngFor="let player of awayPlayersInGame" class="col-12">
+	    			<div class="grid" style="
+	    								display: flex; 
+	    								flex-direction: row; 
+	    								align-items: left; 
+	    								border-style: solid; 
+	    								border-color: white; 
+	    								width: 80%;
+	    								margin-left: 3vw;">
+	    				
+	    				<div class="col-4" style="display: flex;  justify-content: flex-end; margin-top: 2vh;" >
+	    					<div 
+	    						class="circle" 
+	    						*ngFor="let foul of player.fouls"
+	    						[ngClass]="{
+	    							'circle': foul.val === 0, 
+	    							'circle_onfoul': foul.val === 1,
+	    							'circle_expulsion' : foul.val === 2}"
+	    						></div>
+	    				</div>
+	    				<div class="col-7" style="display: flex; justify-content: flex-end; margin-right: 2vw;">
+	    					<p-button label="{{ player.name }}" severity="warning" (click)="showPlayer(player)"></p-button>
+	    				</div>
+	    			</div>
+	    			
 	    		</div>
 	    		<p-divider></p-divider>
 	    		<div class="col-12">
-	    			<p-button label="SUBSTITUTIONS" severity="warning"></p-button>
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row-reverse; 
+						align-items: right; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<p-button label="SUBSTITUTIONS" severity="warning" (click)="openSubsModal('away')"></p-button>
+					</div>
+	    			
 	    		</div>
-	    		<div class="col-6">
-	    			<p-button label="TIMEOUT" severity="warning"></p-button>
+	    		<div class="col-12">
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row-reverse; 
+						align-items: right; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<p-button label="TIMEOUT" severity="warning" (click)="askTimeout('away')"></p-button>
+					</div>
+	    			
 	    		</div>
-	    		<div class="col-6">
-	    			<p-button label="POSS" severity="warning"></p-button>
+	    		<div class="col-12">
+	    			<div class="grid" style="
+						display: flex; 
+						flex-direction: row-reverse; 
+						align-items: right; 
+						border-style: solid; 
+						border-color: white; 
+						width: 80%;
+						margin-left: 3vw; padding: 1vh">
+						<p-button label="POSS" severity="warning" (click)="changePoss('away')"></p-button>
+					</div>
+	    			
 	    		</div>
 	    	</div>
 
@@ -146,16 +273,110 @@
 
 <p-dialog header="Player" [(visible)]="playerInfo" [style]="{width: '60vw'}">
 	<div class="grid">
-		<div class="col-6">
-			<p-table [value]="playerData">
-			    <ng-template pTemplate="body" let-product>
-			        <tr>
-			            <td>{{ product.item }}</td>
-			            <td>{{ product.value }}</td>
-			        </tr>
-			    </ng-template>
-			</p-table>
+		<div class="col-4"> 
+			<p-panel header="Player info">
+				<p-table [value]="playerData">
+				    <ng-template pTemplate="body" let-player>
+				        <tr>
+				            <td>{{ player.item }}</td>
+				            <td>{{ player.value }}</td>
+				        </tr>
+				    </ng-template>
+				</p-table>
+			</p-panel>				
+		</div>
+		<div class="col-4"> 
+			<p-panel header="Player stats">
+				<p-table [value]="playerStats">
+				    <ng-template pTemplate="body" let-player>
+				        <tr>
+				            <td>{{ player.item }}</td>
+				            <td>{{ player.value }}</td>
+				        </tr>
+				    </ng-template>
+				</p-table>
+			</p-panel>
+		</div>
+		<div class="col-4">
+			<p-panel header="Actions" >
+				<div style="display: flex; flex-direction: column; align-items: right; margin-top: 1vh">
+					<button pButton pRipple label="Foul" class="p-button-warning" (click)="normalFoul(selectedPlayer)"></button>
+					<button pButton pRipple label="Offensive foul" class="p-button-warning"></button>
+					<button pButton pRipple label="Un-sportsmanlike" class="p-button-danger"></button>
+					<button pButton pRipple label="Technical foul" class="p-button-danger"></button>
+					<button pButton pRipple label="Expulsion" class="p-button-danger"></button>
+					<p-divider></p-divider>
+					<button pButton pRipple label="MVP" class="p-button-success"></button>
+				</div>					
+			</p-panel>
+			
 		</div>
 	</div>
 			
+</p-dialog>
+
+<p-dialog header="Timeout - {{ timeoutTeam }}" [(visible)]="timeoutModalVisible" [style]="{width: '20vw'}" (onHide)="resetTimeoutTimer()">
+	<div class="grid">
+		<div class="col-12" style="text-align: center;"> 
+			<h2 style="color: red">{{ timeoutTimer }}</h2>
+		</div>
+	</div>
+			
+</p-dialog>
+
+
+<p-dialog header="Substitutions - {{ homeName }}" [(visible)]="subsVisibleHome" [style]="{width: '50vw', 'height' : '55vh'}">
+	<div class="grid">
+		<div class="col-6" style="height: 35vh;">
+			<p-panel header="All players">
+				<div class="p-2 border-1 surface-border border-round" pDroppable (onDrop)="dropRight()" style="height: 28vh; overflow-y: scroll;">
+				    <ul class="list-none flex flex-column gap-2 p-0 m-0">
+				        <li *ngFor="let player of homePlayers" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStartLeft(player)" (onDragEnd)="dragEndLeft()">
+				            {{ player.jersey_n }} - {{player.name}}
+				        </li>
+				    </ul>
+				</div>
+			</p-panel>
+		</div>
+
+		<div class="col-6" style="height: 35vh;">
+			<p-panel header="In game players">
+		        <div class="p-2 border-1 surface-border border-round" pDroppable (onDrop)="dropLeft()" style="height: 28vh;">
+				    <ul class="list-none flex flex-column gap-2 p-0 m-0">
+				        <li *ngFor="let player of homePlayersInGame" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStartRight(player)" (onDragEnd)="dragEndRight()">
+				            {{ player.jersey_n }} - {{player.name}}
+				        </li>
+				    </ul>
+				</div>
+		    </p-panel>				
+		</div>
+	</div>	
+</p-dialog>
+
+<p-dialog header="Substitutions - {{ awayName }}" [(visible)]="subsVisibleAway" [style]="{width: '50vw', 'height' : '55vh'}">
+	<div class="grid">
+		<div class="col-6" style="height: 35vh;">
+			<p-panel header="All players">
+				<div class="p-2 border-1 surface-border border-round" pDroppable (onDrop)="dropRightAway()" style="height: 28vh; overflow-y: scroll;">
+				    <ul class="list-none flex flex-column gap-2 p-0 m-0">
+				        <li *ngFor="let player of awayPlayers" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStartLeftAway(player)" (onDragEnd)="dragEndLeftAway()">
+				            {{ player.jersey_n }} - {{player.name}}
+				        </li>
+				    </ul>
+				</div>
+			</p-panel>
+		</div>
+
+		<div class="col-6" style="height: 35vh;">
+			<p-panel header="In game players">
+		        <div class="p-2 border-1 surface-border border-round" pDroppable (onDrop)="dropLeftAway()" style="height: 28vh;">
+				    <ul class="list-none flex flex-column gap-2 p-0 m-0">
+				        <li *ngFor="let player of awayPlayersInGame" class="p-2 border-round shadow-1" pDraggable (onDragStart)="dragStartRightAway(player)" (onDragEnd)="dragEndRightAway()">
+				            {{ player.jersey_n }} - {{player.name}}
+				        </li>
+				    </ul>
+				</div>
+		    </p-panel>				
+		</div>
+	</div>	
 </p-dialog>

@@ -6,6 +6,7 @@ import { AppRoutingModule   } from './app-routing.module';
 import { AppComponent       } from './app.component';
 import { HomeComponent      } from './pages/home/home.component';
 import { AsideComponent     } from './pages/aside/aside.component';
+import { PlayerComponent    } from './pages/player/player.component';
 
 import { SidebarModule      } from 'primeng/sidebar';
 import { ButtonModule       } from 'primeng/button';
@@ -22,13 +23,17 @@ import { ListboxModule      } from 'primeng/listbox';
 import { CardModule         } from 'primeng/card';
 import { DividerModule      } from 'primeng/divider';
 import { TableModule        } from 'primeng/table';
+import { PanelModule        } from 'primeng/panel';
+import { DragDropModule     } from 'primeng/dragdrop';
+
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     AsideComponent,
-    InGameComponent
+    InGameComponent,
+    PlayerComponent
   ],
   imports: [
     BrowserModule,
@@ -47,7 +52,12 @@ import { TableModule        } from 'primeng/table';
     ListboxModule,
     CardModule,
     DividerModule,
-    TableModule
+    TableModule,
+    PanelModule,
+    DragDropModule
+  ],
+  exports : [
+    PlayerComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

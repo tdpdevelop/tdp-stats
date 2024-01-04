@@ -1,5 +1,7 @@
 import { Component, ViewChild, ElementRef,AfterViewInit, OnInit } from '@angular/core';
 
+import { PlayersService } from './../../services/players.service'
+
 
 @Component({
   selector: 'app-in-game',
@@ -7,7 +9,10 @@ import { Component, ViewChild, ElementRef,AfterViewInit, OnInit } from '@angular
   styleUrl: './in-game.component.css'
 })
 export class InGameComponent implements AfterViewInit, OnInit{
-  @ViewChild('myCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('myCanvas', { static: true }) canvas! : ElementRef<HTMLCanvasElement>;
+
+  public homeTeamName : string = "TOROS A";
+  public awayTeamName : string = "TOROS B";
 
   public gameJsonArray : any[] = [];
 
@@ -17,8 +22,8 @@ export class InGameComponent implements AfterViewInit, OnInit{
   public twentyFour  : string = "24";
 
   //-- Nombres de los equipos
-  public homeName    : string = "TEAM A";
-  public awayName    : string = "TEAM B";
+  public homeName    : string = "TOROS A";
+  public awayName    : string = "TOROS A";
 
   //-- Tiempo
   public timerMin    : string = "10";
@@ -36,76 +41,15 @@ export class InGameComponent implements AfterViewInit, OnInit{
 
   public scoreModal  : boolean = false;
   public playerData  : any[] = [];
-  public homePlayers : any[] = [
-    {
-      id       : 1,
-      name     : 'Rodolfo Soto Figueroa',
-      age      : 28,
-      position : 'Pivot',
-      jersey_n : 36,
-      in_game  : true,
-      rebounds : 0,
-      points   : 0,
-      assists  : 0,
-      doubles  : 0,
-      three    : 0,
-      gen_at   : 0,
-      doubles_at  : 0,
-      three_at    : 0,
-      general_percent : "0%",
-      three_percent   : "0%",
-      double_percent  : "0%",
-      minutes_played  : 0
-    },
-    {
-      id : 2,
-      name : 'Player 2',
-      in_game : true
-    },
-    {
-      id : 3,
-      name : 'Player 3',
-      in_game : false
-    },
-    {
-      id : 4,
-      name : 'Player 4',
-      in_game : true
-    },
-    {
-      id : 5,
-      name : 'Player 5',
-      in_game : true
-    },
+  public playerStats : any[] = [];
+  public homePlayers : any[] = [];
+  public awayPlayers : any[] = [];
 
-  ];
-  public awayPlayers : any[] = [
-    {
-      id : 6,
-      name : 'Player 1',
-      in_game : false
-    },
-    {
-      id : 7,
-      name : 'Player 2',
-      in_game : true
-    },
-    {
-      id : 8,
-      name : 'Player 3',
-      in_game : false
-    },
-    {
-      id : 9,
-      name : 'Player 4',
-      in_game : false
-    },
-    {
-      id : 10,
-      name : 'Player 5',
-      in_game : false
-    },
-  ];
+  public homePlayersInGame : any[]   = [];
+  public awayPlayersInGame : any[]   = [];
+
+  public subsVisibleHome   : boolean = false;
+  public subsVisibleAway   : boolean = false;
 
   public ballInOptions : any[] = [{label: "Scores", value: "scores" }, {label: "Ball out", value: 'ballout'}];
 
@@ -130,21 +74,214 @@ export class InGameComponent implements AfterViewInit, OnInit{
 
   public selectedPlayer : any = {};
 
+
+
+  //-- timeout
+
+  public timeoutTeam         : string  = ""
+  public timeoutTimer        : string  = "60";
+  public timeoutFlag         : boolean = false;
+  public timeoutModalVisible : boolean = false;
+
+  //-- fouls
+
+  public homeFouls : any[] = [ { val : 0}, { val : 0}, { val : 0}, { val : 0}, { val : 0} ];
+  public awayFouls : any[] = [ { val : 0}, { val : 0}, { val : 0}, { val : 0}, { val : 0} ];
+
+  //-- position
+
+  public possHome : boolean = false;
+  public possAway : boolean = false;
+
+
+  /* DRAG AND DROP */
+  /* HOME */
+
+  /* LEFT */
+
+  public draggedPlayerLeft : any | undefined | null;
+
+  dragStartLeft( player : any ) {
+      this.draggedPlayerLeft = player;
+  }
+
+  dropLeft() {
+    if ( this.homePlayersInGame.length < 5 ){
+      if (this.draggedPlayerLeft) {
+          let draggedPlayerLeftIndex = this.findIndexLeft(this.draggedPlayerLeft);
+          this.homePlayersInGame = [...(this.homePlayersInGame as any[]), this.draggedPlayerLeft];
+          this.homePlayers = this.homePlayers?.filter((val, i) => i != draggedPlayerLeftIndex);
+          this.draggedPlayerLeft = null;
+      }
+    }
+    else{
+      this.dragEndLeft();
+    }
+      
+  }
+
+  dragEndLeft() {
+      this.draggedPlayerLeft = null;
+  }
+
+  findIndexLeft( product : any) {
+    let index = -1;
+    for (let i = 0; i < (this.homePlayers as any[]).length; i++) {
+        if (product.id === (this.homePlayers as any[])[i].id) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+  }
+
+  /* RIGHT */
+
+  public draggedPlayerRight : any | undefined | null;
+
+  dragStartRight( player : any ) {
+      this.draggedPlayerRight = player;
+  }
+
+  dropRight() {
+    if (this.draggedPlayerRight) {
+        let draggedPlayerRightIndex = this.findIndexRight(this.draggedPlayerRight);
+
+        this.homePlayers        = [...(this.homePlayers as any[]), this.draggedPlayerRight];
+        this.homePlayersInGame  = this.homePlayersInGame?.filter((val, i) => i != draggedPlayerRightIndex);
+        this.draggedPlayerRight = null;
+    }
+  }
+
+  dragEndRight() {
+      this.draggedPlayerRight = null;
+  }
+
+  findIndexRight( product : any) {
+    let index = -1;
+    for (let i = 0; i < (this.homePlayersInGame as any[]).length; i++) {
+        if (product.id === (this.homePlayersInGame as any[])[i].id) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+  }
+
+
+  /* AWAY */
+  /* LEFT */
+
+  public draggedPlayerLeftAway : any | undefined | null;
+
+  dragStartLeftAway( player : any ) {
+      this.draggedPlayerLeftAway = player;
+  }
+
+  dropLeftAway() {
+    if ( this.awayPlayersInGame.length < 5 ){
+      if (this.draggedPlayerLeftAway) {
+          let draggedPlayerLeftAwayIndex = this.findIndexLeftAway(this.draggedPlayerLeftAway);
+          this.awayPlayersInGame = [...(this.awayPlayersInGame as any[]), this.draggedPlayerLeftAway];
+          this.awayPlayers = this.awayPlayers?.filter((val, i) => i != draggedPlayerLeftAwayIndex);
+          this.draggedPlayerLeftAway = null;
+      }
+    }
+    else{
+      this.dragEndLeftAway();
+    }
+      
+  }
+
+  dragEndLeftAway() {
+      this.draggedPlayerLeftAway = null;
+  }
+
+  findIndexLeftAway( product : any) {
+    let index = -1;
+    for (let i = 0; i < (this.awayPlayers as any[]).length; i++) {
+        if (product.id === (this.awayPlayers as any[])[i].id) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+  }
+
+  /* RIGHT */
+
+  public draggedPlayerRightAway : any | undefined | null;
+
+  dragStartRightAway( player : any ) {
+      this.draggedPlayerRightAway = player;
+  }
+
+  dropRightAway() {
+    if (this.draggedPlayerRightAway) {
+        let draggedPlayerRightAwayIndex = this.findIndexRightAway(this.draggedPlayerRightAway);
+
+        this.awayPlayers        = [...(this.awayPlayers as any[]), this.draggedPlayerRightAway];
+        this.awayPlayersInGame  = this.awayPlayersInGame?.filter((val, i) => i != draggedPlayerRightAwayIndex);
+        this.draggedPlayerRightAway = null;
+    }
+  }
+
+  dragEndRightAway() {
+      this.draggedPlayerRightAway = null;
+  }
+
+  findIndexRightAway( product : any) {
+    let index = -1;
+    for (let i = 0; i < (this.awayPlayersInGame as any[]).length; i++) {
+        if (product.id === (this.awayPlayersInGame as any[])[i].id) {
+            index = i;
+            break;
+        }
+    }
+    return index;
+  }
+
+  constructor(
+    private playersService : PlayersService,
+  ){
+    this.homePlayers = this.playersService.getPlayersByTeamId(1);
+    this.awayPlayers = this.playersService.getPlayersByTeamId(2);
+  }
+
   ngOnInit(){
 
     setInterval( () => {
+
+      if ( this.timeoutFlag == true ){
+        if ( parseInt(this.timeoutTimer) > 0 ){
+          this.timeoutTimer = ( parseInt(this.timeoutTimer) - 1 ) + "";
+          
+        }
+        if ( parseInt(this.timeoutTimer) == 0 ){
+          this.timeoutFlag  = false;
+        }
+      }
       if ( this.inGameStart == true ){
 
         //--
-        this.twentyFour = (parseInt(this.twentyFour) - 1) + "";
 
-        if ( parseInt(this.twentyFour) == 0 ){
-          this.inGameStart = false;
-          this.twentyFour  = "24"; 
+        if ( (parseInt(this.twentyFour) > parseInt(this.timerSec) && parseInt(this.timerMin) < 1 ) ){
+          this.twentyFour = "--";
         }
+        else{
+          this.twentyFour = (parseInt(this.twentyFour) - 1) + "";
+
+          if ( parseInt(this.twentyFour) == 0 ){
+            this.inGameStart = false;
+            this.twentyFour  = "24"; 
+          }
+        }
+          
 
         if ( this.lastMinute == true ){
           if ( parseInt(this.timerMin) == 0 && parseInt(this.timerSec) == 0 ){
+
+            //-- fin de un cuarto
             this.inGameStart = false;
             this.timerMin    = "10";
             this.timerSec    = "00";
@@ -152,6 +289,8 @@ export class InGameComponent implements AfterViewInit, OnInit{
             this.period = (parseInt(this.period) + 1) + "";
 
             this.endQuarter = true;
+
+            this.endQuarterMethod();
           }
         }
         if ( this.endQuarter == false ){
@@ -187,8 +326,6 @@ export class InGameComponent implements AfterViewInit, OnInit{
       }        
     }, 1000)
   }
-
-
   ngAfterViewInit(): void {
     this.canvas.nativeElement.addEventListener('click', (event) => {
       const rect = this.canvas.nativeElement.getBoundingClientRect();
@@ -212,6 +349,20 @@ export class InGameComponent implements AfterViewInit, OnInit{
 
   }
 
+  askTimeout( team : string ){
+    this.pauseGame();
+    this.timeoutModalVisible = true;      
+    this.timeoutFlag         = true;
+
+    if ( team == "home" ){
+      this.timeoutTeam = this.homeTeamName;
+    }
+    else{
+      this.timeoutTeam = this.awayTeamName;
+    }
+
+  }
+
   playGame(){
     this.inGameStart = true;
     this.endQuarter  = false;
@@ -229,6 +380,30 @@ export class InGameComponent implements AfterViewInit, OnInit{
 
   public setScorePlayer( player : any ){
     this.scorePlayer = player;
+  }
+
+  private endQuarterMethod(){
+    this.homeFouls = [ { val : 0}, { val : 0}, { val : 0}, { val : 0}, { val : 0} ];
+    this.awayFouls = [ { val : 0}, { val : 0}, { val : 0}, { val : 0}, { val : 0} ];
+
+    const canvasImg = this.canvas.nativeElement.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = canvasImg;
+    link.download = this.homeTeamName + '_vs_' + this.awayTeamName + '_' + this.period + '_quarter.png'; // Cambia el nombre del archivo según tu preferencia
+    link.click();
+
+    const ctx = this.canvas.nativeElement.getContext('2d')!;
+    const imagePath = 'assets/images/image.png'; // Ruta relativa desde el archivo TypeScript
+
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    };
+
+    img.src = imagePath;
+
+    this.twentyFour = "24";
+
   }
 
   public saveInPlayData(){
@@ -304,13 +479,21 @@ export class InGameComponent implements AfterViewInit, OnInit{
         if ( player_id == this.homePlayers[i].id ){
           if ( scores == "scores" ){
             this.homePlayers[i].points += points;
+            if ( points == 1 ){
+              this.homePlayers[i].free_sht += 1;
+            }
             if ( points == 2 ){
               this.homePlayers[i].doubles += 2;
-
             }
             else if ( points == 3 ){
               this.homePlayers[i].three  += 3;
             }
+          }
+          if ( points == 1 ){
+            this.homePlayers[i].fr_sh_at += 1;
+            this.homePlayers[i].gen_at   += 1;
+            this.homePlayers[i].fr_sht_percent  = this.getPercent(this.homePlayers[i].free_sht, this.homePlayers[i].fr_sh_at) + "%"; 
+            this.homePlayers[i].general_percent = this.getPercent(this.homePlayers[i].points, this.homePlayers[i].gen_at) + "%";
           }
           if ( points == 2 ){
             this.homePlayers[i].doubles_at += 2; 
@@ -329,7 +512,41 @@ export class InGameComponent implements AfterViewInit, OnInit{
       }
     }
     else{
+      for ( let i = 0 ; i < this.awayPlayers.length ; i ++ ){
+        if ( player_id == this.awayPlayers[i].id ){
+          if ( scores == "scores" ){
+            this.awayPlayers[i].points += points;
+            if ( points == 1 ){
+              this.awayPlayers[i].free_sht += 1;
+            }
+            if ( points == 2 ){
+              this.awayPlayers[i].doubles += 2;
+            }
+            else if ( points == 3 ){
+              this.awayPlayers[i].three  += 3;
+            }
+          }
+          if ( points == 1 ){
+            this.awayPlayers[i].fr_sh_at += 1;
+            this.awayPlayers[i].gen_at   += 1;
+            this.awayPlayers[i].fr_sht_percent  = this.getPercent(this.awayPlayers[i].free_sht, this.awayPlayers[i].fr_sh_at) + "%"; 
+            this.awayPlayers[i].general_percent = this.getPercent(this.awayPlayers[i].points, this.awayPlayers[i].gen_at) + "%";
+          }
+          if ( points == 2 ){
+            this.awayPlayers[i].doubles_at += 2; 
+            this.awayPlayers[i].gen_at     += 2; 
+            this.awayPlayers[i].double_percent  = this.getPercent(this.awayPlayers[i].doubles, this.awayPlayers[i].doubles_at) + "%";
+            this.awayPlayers[i].general_percent = this.getPercent(this.awayPlayers[i].points, this.awayPlayers[i].gen_at) + "%";
+          }
+          else if ( points == 3 ){
+            this.awayPlayers[i].three_at += 3; 
+            this.awayPlayers[i].gen_at   += 3; 
+            this.awayPlayers[i].three_percent   = this.getPercent(this.awayPlayers[i].three, this.awayPlayers[i].three_at) + "%";
+            this.awayPlayers[i].general_percent = this.getPercent(this.awayPlayers[i].points, this.awayPlayers[i].gen_at) + "%";
+          }
 
+        }
+      }
     }
   }
 
@@ -366,6 +583,7 @@ export class InGameComponent implements AfterViewInit, OnInit{
 
   public showPlayer( player : any ){
     this.playerData     = [];
+    this.playerStats    = [];
     this.playerInfo     = true;
     this.selectedPlayer = player;
 
@@ -391,6 +609,19 @@ export class InGameComponent implements AfterViewInit, OnInit{
         value : player.points 
       },
       {
+        item : 'Fouls',
+        value : player.fouls_in_game
+      }
+      
+      
+    );
+
+    this.playerStats.push(
+      {
+        item  : 'Free shoots',
+        value : player.free_sht 
+      },
+      {
         item  : '2 point',
         value : player.doubles 
       },
@@ -403,25 +634,133 @@ export class InGameComponent implements AfterViewInit, OnInit{
         value : player.general_percent 
       },
       {
-        item  : '3 point percent',
-        value : player.three_percent 
+        item  : 'Free shoot percent',
+        value : player.fr_sht_percent 
       },
       {
         item  : '2 point percent',
         value : player.double_percent 
       },
       {
+        item  : '3 point percent',
+        value : player.three_percent 
+      },      
+      {
         item  : 'Minutes played',
         value : player.minutes_played 
       },
-      
-    );
+    )
 
 
   }
 
   public resetTF( num : string ){
     this.twentyFour = num;
+  }
+
+  public normalFoul( player : any ){
+    let flag : boolean = false;
+
+    for ( let i = 0 ; i < this.homePlayers.length ; i ++ ){
+      if ( this.homePlayers[i].id == player.id ){
+        for ( let j = 0 ; j < 5 ; j ++ ){
+          if ( j == 4 && this.homePlayers[i].fouls[j].val == 0 ){
+              this.homePlayers[i].fouls[j].val = 2;
+              this.teamFoul('home');
+              j = 5;
+            }
+          if ( this.homePlayers[i].fouls[j].val == 0 ){
+            this.homePlayers[i].fouls[j].val = 1;
+            this.teamFoul('home');
+            j = 5;
+          }
+        }
+        flag = true;
+        break;
+      }
+    }
+
+    if ( flag == false ){
+      for ( let i = 0 ; i < this.awayPlayers.length ; i ++ ){
+        if ( this.awayPlayers[i].id == player.id ){
+          for ( let j = 0 ; j < 5 ; j ++ ){
+            if ( j == 4 && this.awayPlayers[i].fouls[j].val == 0 ){
+              this.awayPlayers[i].fouls[j].val = 2;
+              this.teamFoul('away');
+              j = 5;
+            }
+            if ( this.awayPlayers[i].fouls[j].val == 0 ){
+              this.awayPlayers[i].fouls[j].val = 1;
+              this.teamFoul('away');
+              j = 5;
+            }
+          }
+          flag = true;
+          break;
+        }
+      }
+    }
+  }
+
+  public teamFoul( team : string ){
+    let flag : boolean = false;
+    if ( team == 'home' ){
+      for ( let i = 0 ; i < this.homeFouls.length ; i ++ ){
+        if ( this.homeFouls[i].val == 0 ){
+          this.homeFouls[i].val = 1;
+          if ( i != this.homeFouls.length -1 ){
+            flag = true;
+          }
+          break;
+        }
+      }
+      if ( flag == false ){
+        for ( let i = 0 ; i < this.homeFouls.length ; i ++ ){
+          this.homeFouls[i].val = 2;
+        }
+      }
+    }
+    else {
+      for ( let i = 0 ; i < this.awayFouls.length ; i ++ ){
+        if ( this.awayFouls[i].val == 0 ){
+          this.awayFouls[i].val = 1;
+          if ( i != this.awayFouls.length -1 ){
+            flag = true;
+          }          
+          break;
+        }
+      }
+      if ( flag == false ){
+        for ( let i = 0 ; i < this.awayFouls.length ; i ++ ){
+          this.awayFouls[i].val = 2;
+        }
+      }
+    }
+
+  }
+
+  public changePoss( team : string ){
+    if ( team == 'home' ){
+      this.possHome = true;
+      this.possAway = false;
+    }
+    else{
+      this.possHome = false;
+      this.possAway = true;
+    }
+  }
+
+  public resetTimeoutTimer(){
+    this.timeoutTimer = "60";
+  }
+
+  public openSubsModal( team : string ){
+    if ( team == "home" ){
+      this.subsVisibleHome = true;
+    }
+    else{
+      this.subsVisibleAway = true;
+    }
   }
 }
 
