@@ -1,0 +1,21 @@
+<div class="grid">
+	<div class="col-4">
+		<h3>Ligas registradas</h3>
+		<p-listbox [options]="leagues" [(ngModel)]="selectedLeague" optionLabel="name" [style]="{'width':'15rem'}" [listStyle]="{'min-height': '80vh', 'max-height': '80vh'}" (onChange)="onLeagueSelected($event)"></p-listbox>
+	</div>
+	<div class="col-8">
+		<p-table [value]="teams" selectionMode="single" [(selection)]="selectedTeam" dataKey="id" [tableStyle]="{'min-width': '50rem'}">
+		    <ng-template pTemplate="header">
+		        <tr>
+		            <th>Nombre del equipo</th>
+		        </tr>
+		    </ng-template>
+		    <ng-template pTemplate="body" let-team>
+		        <tr [pSelectableRow]="team">
+		            <td>{{team.name}}</td>
+		            <td>{{team.name}}</td>
+		        </tr>
+		    </ng-template>
+		</p-table>
+	</div>
+</div>

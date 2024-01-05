@@ -1,0 +1,10 @@
+<div class="flex flex-column gap-2" style="margin-top: 20px">
+	<p-dropdown [options]="leagues" [(ngModel)]="selectedLeague" optionLabel="name" [showClear]="true" placeholder="Selecciona una liga"></p-dropdown>
+</div>
+
+<div class="flex flex-column gap-2" style="margin-top: 20px">
+    <label for="username">Nombre del nuevo equipo</label>
+    <input type="text" pInputText [(ngModel)]="teamName" />
+    <p-button label="Guardar" (click)="saveTeam()"></p-button>
+</div>
+

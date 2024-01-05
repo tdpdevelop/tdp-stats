@@ -26,7 +26,11 @@ import { TableModule        } from 'primeng/table';
 import { PanelModule        } from 'primeng/panel';
 import { DragDropModule     } from 'primeng/dragdrop';
 import { FileUploadModule   } from 'primeng/fileupload';
-
+import { LeagueInsertComponent } from './pages/league-insert/league-insert.component';
+import { InputTextModule    } from 'primeng/inputtext';
+import { TeamsComponent } from './pages/teams/teams.component';
+import { CreateTeamComponent } from './pages/create-team/create-team.component';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,10 @@ import { FileUploadModule   } from 'primeng/fileupload';
     HomeComponent,
     AsideComponent,
     InGameComponent,
-    PlayerComponent
+    PlayerComponent,
+    LeagueInsertComponent,
+    TeamsComponent,
+    CreateTeamComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +63,9 @@ import { FileUploadModule   } from 'primeng/fileupload';
     TableModule,
     PanelModule,
     DragDropModule,
-    FileUploadModule
+    FileUploadModule,
+    InputTextModule,
+    DropdownModule
   ],
   exports : [
     PlayerComponent

@@ -488,74 +488,74 @@ export class InGameComponent implements AfterViewInit, OnInit{
   private updatePlayerData( points : number, scores : string , scoreTeam : string, player_id : number ){
 
     if ( scoreTeam == "home" ){
-      for ( let i = 0 ; i < this.homePlayers.length ; i ++ ){
-        if ( player_id == this.homePlayers[i].id ){
+      for ( let i = 0 ; i < this.homePlayersInGame.length ; i ++ ){
+        if ( player_id == this.homePlayersInGame[i].id ){
           if ( scores == "scores" ){
-            this.homePlayers[i].points += points;
+            this.homePlayersInGame[i].points += points;
             if ( points == 1 ){
-              this.homePlayers[i].free_sht += 1;
+              this.homePlayersInGame[i].free_sht += 1;
             }
             if ( points == 2 ){
-              this.homePlayers[i].doubles += 2;
+              this.homePlayersInGame[i].doubles += 2;
             }
             else if ( points == 3 ){
-              this.homePlayers[i].three  += 3;
+              this.homePlayersInGame[i].three  += 3;
             }
           }
           if ( points == 1 ){
-            this.homePlayers[i].fr_sh_at += 1;
-            this.homePlayers[i].gen_at   += 1;
-            this.homePlayers[i].fr_sht_percent  = this.getPercent(this.homePlayers[i].free_sht, this.homePlayers[i].fr_sh_at) + "%"; 
-            this.homePlayers[i].general_percent = this.getPercent(this.homePlayers[i].points, this.homePlayers[i].gen_at) + "%";
+            this.homePlayersInGame[i].fr_sh_at += 1;
+            this.homePlayersInGame[i].gen_at   += 1;
+            this.homePlayersInGame[i].fr_sht_percent  = this.getPercent(this.homePlayersInGame[i].free_sht, this.homePlayersInGame[i].fr_sh_at) + "%"; 
+            this.homePlayersInGame[i].general_percent = this.getPercent(this.homePlayersInGame[i].points, this.homePlayersInGame[i].gen_at) + "%";
           }
           if ( points == 2 ){
-            this.homePlayers[i].doubles_at += 2; 
-            this.homePlayers[i].gen_at     += 2; 
-            this.homePlayers[i].double_percent  = this.getPercent(this.homePlayers[i].doubles, this.homePlayers[i].doubles_at) + "%";
-            this.homePlayers[i].general_percent = this.getPercent(this.homePlayers[i].points, this.homePlayers[i].gen_at) + "%";
+            this.homePlayersInGame[i].doubles_at += 2; 
+            this.homePlayersInGame[i].gen_at     += 2; 
+            this.homePlayersInGame[i].double_percent  = this.getPercent(this.homePlayersInGame[i].doubles, this.homePlayersInGame[i].doubles_at) + "%";
+            this.homePlayersInGame[i].general_percent = this.getPercent(this.homePlayersInGame[i].points, this.homePlayersInGame[i].gen_at) + "%";
           }
           else if ( points == 3 ){
-            this.homePlayers[i].three_at += 3; 
-            this.homePlayers[i].gen_at   += 3; 
-            this.homePlayers[i].three_percent   = this.getPercent(this.homePlayers[i].three, this.homePlayers[i].three_at) + "%";
-            this.homePlayers[i].general_percent = this.getPercent(this.homePlayers[i].points, this.homePlayers[i].gen_at) + "%";
+            this.homePlayersInGame[i].three_at += 3; 
+            this.homePlayersInGame[i].gen_at   += 3; 
+            this.homePlayersInGame[i].three_percent   = this.getPercent(this.homePlayersInGame[i].three, this.homePlayersInGame[i].three_at) + "%";
+            this.homePlayersInGame[i].general_percent = this.getPercent(this.homePlayersInGame[i].points, this.homePlayersInGame[i].gen_at) + "%";
           }
 
         }
       }
     }
     else{
-      for ( let i = 0 ; i < this.awayPlayers.length ; i ++ ){
-        if ( player_id == this.awayPlayers[i].id ){
+      for ( let i = 0 ; i < this.awayPlayersInGame.length ; i ++ ){
+        if ( player_id == this.awayPlayersInGame[i].id ){
           if ( scores == "scores" ){
-            this.awayPlayers[i].points += points;
+            this.awayPlayersInGame[i].points += points;
             if ( points == 1 ){
-              this.awayPlayers[i].free_sht += 1;
+              this.awayPlayersInGame[i].free_sht += 1;
             }
             if ( points == 2 ){
-              this.awayPlayers[i].doubles += 2;
+              this.awayPlayersInGame[i].doubles += 2;
             }
             else if ( points == 3 ){
-              this.awayPlayers[i].three  += 3;
+              this.awayPlayersInGame[i].three  += 3;
             }
           }
           if ( points == 1 ){
-            this.awayPlayers[i].fr_sh_at += 1;
-            this.awayPlayers[i].gen_at   += 1;
-            this.awayPlayers[i].fr_sht_percent  = this.getPercent(this.awayPlayers[i].free_sht, this.awayPlayers[i].fr_sh_at) + "%"; 
-            this.awayPlayers[i].general_percent = this.getPercent(this.awayPlayers[i].points, this.awayPlayers[i].gen_at) + "%";
+            this.awayPlayersInGame[i].fr_sh_at += 1;
+            this.awayPlayersInGame[i].gen_at   += 1;
+            this.awayPlayersInGame[i].fr_sht_percent  = this.getPercent(this.awayPlayersInGame[i].free_sht, this.awayPlayersInGame[i].fr_sh_at) + "%"; 
+            this.awayPlayersInGame[i].general_percent = this.getPercent(this.awayPlayersInGame[i].points, this.awayPlayersInGame[i].gen_at) + "%";
           }
           if ( points == 2 ){
-            this.awayPlayers[i].doubles_at += 2; 
-            this.awayPlayers[i].gen_at     += 2; 
-            this.awayPlayers[i].double_percent  = this.getPercent(this.awayPlayers[i].doubles, this.awayPlayers[i].doubles_at) + "%";
-            this.awayPlayers[i].general_percent = this.getPercent(this.awayPlayers[i].points, this.awayPlayers[i].gen_at) + "%";
+            this.awayPlayersInGame[i].doubles_at += 2; 
+            this.awayPlayersInGame[i].gen_at     += 2; 
+            this.awayPlayersInGame[i].double_percent  = this.getPercent(this.awayPlayersInGame[i].doubles, this.awayPlayersInGame[i].doubles_at) + "%";
+            this.awayPlayersInGame[i].general_percent = this.getPercent(this.awayPlayersInGame[i].points, this.awayPlayersInGame[i].gen_at) + "%";
           }
           else if ( points == 3 ){
-            this.awayPlayers[i].three_at += 3; 
-            this.awayPlayers[i].gen_at   += 3; 
-            this.awayPlayers[i].three_percent   = this.getPercent(this.awayPlayers[i].three, this.awayPlayers[i].three_at) + "%";
-            this.awayPlayers[i].general_percent = this.getPercent(this.awayPlayers[i].points, this.awayPlayers[i].gen_at) + "%";
+            this.awayPlayersInGame[i].three_at += 3; 
+            this.awayPlayersInGame[i].gen_at   += 3; 
+            this.awayPlayersInGame[i].three_percent   = this.getPercent(this.awayPlayersInGame[i].three, this.awayPlayersInGame[i].three_at) + "%";
+            this.awayPlayersInGame[i].general_percent = this.getPercent(this.awayPlayersInGame[i].points, this.awayPlayersInGame[i].gen_at) + "%";
           }
 
         }

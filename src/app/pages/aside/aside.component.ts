@@ -25,10 +25,12 @@ export class AsideComponent implements OnInit {
                   {
                       label: 'Ver ligas',
                       icon: 'pi pi-fw pi-eye',
+                      command: () => this.leagues() 
                   },
                   {
                       label: 'Agregar Liga',
-                      icon: 'pi pi-fw pi-plus-circle'
+                      icon: 'pi pi-fw pi-plus-circle',
+                      command: () => this.leaguesInsert()
                   }
               ]
           },
@@ -37,12 +39,14 @@ export class AsideComponent implements OnInit {
               icon: 'pi pi-fw pi-sitemap',
               items: [
                   {
-                      label: 'Ver equipo',
-                      icon: 'pi pi-fw pi-eye'
+                      label: 'Ver equipos',
+                      icon: 'pi pi-fw pi-eye',
+                      command: () => this.teams()
                   },
                   {
-                      label: 'Asignar equipo',
-                      icon: 'pi pi-fw pi-plus'
+                      label: 'Agregar equipo',
+                      icon: 'pi pi-fw pi-plus',
+                      command: () => this.createTeam()
                   }
               ]
           },
@@ -70,6 +74,22 @@ export class AsideComponent implements OnInit {
 
   private inGame(): void {
     this.router.navigate(['/in-game']); // Navegar a la ruta '/ver-ligas'
+  }
+
+  private leagues(): void {
+    this.router.navigate(['/home']); // Navegar a la ruta '/ver-ligas'
+  }
+
+  private leaguesInsert(): void {
+    this.router.navigate(['/league-insert']); // Navegar a la ruta '/ver-ligas'
+  }
+
+  private teams(): void {
+    this.router.navigate(['/teams']); // Navegar a la ruta '/ver-ligas'
+  }
+
+  private createTeam(): void {
+    this.router.navigate(['/create-team']); // Navegar a la ruta '/ver-ligas'
   }
 
 }

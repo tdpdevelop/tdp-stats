@@ -1,1 +1,21 @@
-<p>home works!</p>
+<p-table [value]="leagues" [tableStyle]="{'min-width': '60rem'}">
+    <ng-template pTemplate="caption">
+        <div class="flex align-items-center justify-content-between">
+            Ligas registradas
+            <p-button icon="pi pi-refresh"></p-button>
+        </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+        <tr>
+            <th></th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-league>
+        <tr>
+            <td>{{league.id}}</td>
+            <td>{{league.name}}</td>
+            <td></td>
+        </tr>
+    </ng-template>
+</p-table>
